@@ -35,6 +35,17 @@ jobs:
         IMAGE_NAME=$(docker load < output.tar | grep "Loaded image" | sed 's/^Loaded image: //')
         IMAGE_NAME=$IMAGE_NAME ./test.sh
 
+    - uses: chainguard-images/actions/apko-build@main
+      with:
+        config: apko-root-glibc.yaml
+        tag: go:${{ steps.snapshot-date.outputs.date }}
+        archs: x86_64
+
+    - name: Smoke Test (root)
+      run: |
+        IMAGE_NAME=$(docker load < output.tar | grep "Loaded image" | sed 's/^Loaded image: //')
+        IMAGE_NAME=$IMAGE_NAME ./test.sh
+
     - uses: actions/upload-artifact@v3
       with:
         name: go-glibc.tar
